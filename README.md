@@ -19,4 +19,4 @@ Todo app crée avec React Native
 
 # Technologies
 
-Technologies utilisés : React, React Native
+Technologies utilisés : React, React Native, Typescript et Javascript

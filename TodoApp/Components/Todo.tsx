@@ -2,11 +2,9 @@ import {
   Alert,
   KeyboardAvoidingView,
   Modal,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
-  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -23,7 +21,6 @@ import {todoAdd, todoUpdate, todoRemove} from '../Reducers/Todo/slice';
 import {TODO_MAX_LENGTH} from '../Utils/Todo/validator';
 
 import {stylesModalButton} from '../Styles/ModalButtons';
-import {useEffect} from 'react';
 
 const Todo = (props: {todo: {item: TodoInterface}}) => {
   // Redux
@@ -38,11 +35,13 @@ const Todo = (props: {todo: {item: TodoInterface}}) => {
   const [showModalTodoChangeText, setShowModalTodoChangeText] =
     useState<boolean>(false);
 
-  const handleTodoStartUpdateText = () => {
+  // Commencer modification texte
+  const handleUpdateTodoTextStart = () => {
     setShowModalTodoChangeText(true);
   };
 
-  const handleTodoEndUpdateText = () => {
+  // Finir modification texte
+  const handleUpdateTodoTextEnd = () => {
     console.log('Set to >> ', tempTodoText);
     if (
       tempTodoText.trim().length <= 0 ||
@@ -50,6 +49,7 @@ const Todo = (props: {todo: {item: TodoInterface}}) => {
     ) {
       return;
     }
+    // Update todo
     dispatchTodo(
       todoUpdate({
         id: props.todo.item.id,
@@ -65,6 +65,7 @@ const Todo = (props: {todo: {item: TodoInterface}}) => {
     setShowModalTodoChangeText(false);
   };
 
+  // Supprimer todo
   const handleTodoDelete = () => {
     Alert.alert(
       'Êtes vous sur de vouloir supprimer ?',
@@ -95,79 +96,79 @@ const Todo = (props: {todo: {item: TodoInterface}}) => {
   };
 
   return (
-    <View style={styles['todos-container__todo']}>
-      {/* Todo text */}
-      <ContextMenu
-        title="Options"
-        actions={[
-          {
-            title: 'Modifier',
-            destructive: false,
-            systemIcon: 'mode_edit',
-          },
-          {
-            title: 'Supprimer',
-            destructive: true,
-            systemIcon: 'minus.circle.fill',
-          },
-        ]}
-        onPress={e => {
-          if (e.nativeEvent.name === 'Supprimer') {
-            handleTodoDelete();
-          } else if (e.nativeEvent.name === 'Modifier') {
-            handleTodoStartUpdateText();
-          }
-        }}>
+    <ContextMenu
+      title="Options"
+      actions={[
+        {
+          title: 'Modifier',
+          destructive: false,
+          systemIcon: 'mode_edit',
+        },
+        {
+          title: 'Supprimer',
+          destructive: true,
+          systemIcon: 'minus.circle.fill',
+        },
+      ]}
+      onPress={e => {
+        if (e.nativeEvent.name === 'Supprimer') {
+          handleTodoDelete();
+        } else if (e.nativeEvent.name === 'Modifier') {
+          handleUpdateTodoTextStart();
+        }
+      }}>
+      <View style={styles['todos-container__todo']}>
+        {/* Todo text */}
         <Text style={styles['todos-container__todo__text']}>{todoText}</Text>
-      </ContextMenu>
 
-      {/* Modal modifier le texte */}
-      <Modal
-        animationType={'fade'}
-        onRequestClose={() => setShowModalTodoChangeText(false)}
-        presentationStyle={'overFullScreen'}
-        transparent={true} // Arrière plan transparent
-        visible={showModalTodoChangeText}>
-        <View style={stylesModal['modal-container']}>
-          <View style={stylesModal['modal-container__content']}>
-            {/* Titre */}
-            <Text style={{fontSize: 20, fontWeight: '500', color: 'black'}}>
-              Modifier le texte
-            </Text>
+        {/* Modal modifier le texte */}
+        <Modal
+          animationType={'fade'}
+          onRequestClose={() => setShowModalTodoChangeText(false)}
+          presentationStyle={'overFullScreen'}
+          transparent={true} // Arrière plan transparent
+          visible={showModalTodoChangeText}>
+          <View style={stylesModal['modal-container']}>
+            <View style={stylesModal['modal-container__content']}>
+              {/* Titre */}
+              <Text style={{fontSize: 20, fontWeight: '500', color: 'black'}}>
+                Modifier le texte
+              </Text>
 
-            {/* Text input */}
-            <TextInput
-              selectionColor={'black'}
-              style={stylesModal['modal-container__content__input']}
-              editable={true}
-              placeholderTextColor={'black'}
-              placeholder={'Texte...'}
-              maxLength={TODO_MAX_LENGTH}
-              defaultValue={todoText}
-              autoCapitalize={'sentences'}
-              onChangeText={value => {
-                setTempTodoText(value);
-              }}
-            />
+              {/* Text input */}
+              <TextInput
+                selectionColor={'black'}
+                style={stylesModal['modal-container__content__input']}
+                editable={true}
+                placeholderTextColor={'black'}
+                placeholder={'Texte...'}
+                maxLength={TODO_MAX_LENGTH}
+                defaultValue={todoText}
+                autoCapitalize={'sentences'}
+                onChangeText={value => {
+                  setTempTodoText(value);
+                }}
+              />
 
-            {/* boutons */}
-            <View style={stylesModal['modal-container__content__buttons']}>
-              <TouchableOpacity
-                onPress={e => setShowModalTodoChangeText(false)}>
-                <Text style={stylesModalButton.modalButtonSecondarySmall}>
-                  Annuler
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={e => handleTodoEndUpdateText()}>
-                <Text style={stylesModalButton.modalButtonMainSmall}>
-                  Modifier
-                </Text>
-              </TouchableOpacity>
+              {/* boutons */}
+              <View style={stylesModal['modal-container__content__buttons']}>
+                <TouchableOpacity
+                  onPress={e => setShowModalTodoChangeText(false)}>
+                  <Text style={stylesModalButton.modalButtonSecondarySmall}>
+                    Annuler
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={e => handleUpdateTodoTextEnd()}>
+                  <Text style={stylesModalButton.modalButtonMainSmall}>
+                    Modifier
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ContextMenu>
   );
 };
 
@@ -206,7 +207,6 @@ const stylesModal = StyleSheet.create({
 
 const styles = StyleSheet.create({
   'todos-container__todo': {
-    // flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',

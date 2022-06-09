@@ -37,7 +37,7 @@ const App = () => {
   const todos = useSelector((state: RootState) => state.todo);
   const dispatchTodo = useDispatch();
 
-  const [todoTitle, setTodoTitle] = useState('🍊 Courses');
+  const [todoTitle, setTodoTitle] = useState('🍊 Titre');
 
   useEffect(() => {
     console.log('new data : ', todos);
@@ -70,10 +70,10 @@ const App = () => {
           </View>
         </View>
 
-        {/* Add todo */}
+        {/* Add todo ('addtodo-container') */}
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles['input-container']}>
+          style={styles['addtodo-container']}>
           <AddTodo />
         </KeyboardAvoidingView>
       </View>
@@ -82,16 +82,15 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  'app-container': {
-    // margin: 35,
-    marginBottom: 35,
-    flex: 1,
-  },
   logo: {
     textAlign: 'left',
     fontSize: 32,
     fontWeight: '500',
     color: '#FFFFFF',
+  },
+  'app-container': {
+    marginBottom: 35,
+    flex: 1,
   },
   'todos-container': {
     flex: 8,
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
   'todos-container__todos': {
     marginTop: 20,
   },
-  'input-container': {
+  'addtodo-container': {
     flex: 1,
     flexDirection: 'row',
     marginTop: 50,
